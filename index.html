@@ -1,8 +1,109 @@
 <html>
   <head>
+    <meta charset='utf-8' />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- 		&#x2615; &#xfe0f; is the unicode bytes for the coffee emoji -->
+    <title>&#x2615; &#xfe0f;</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif; 
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      .all-time-container, .today-container {
+        text-align: center;
+      }
+      .today-container {
+        margin: 15px 0;
+        margin-bottom: 40px;
+      }
+      .today-container > h1 {
+        font-size: 4em;
+        margin: 0;
+      }
+      h3 {
+        margin: 0;
+      }
+      .all-time {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .all-time > div {
+        padding: 5px 10px;
+      }
+      .tiny {
+        font-size: 10px;
+      }
+    </style>
   </head>
   <body>
-    <h1>yes.</h1>
+    <div class='today-container'>
+      <div class='today-summary'></div>
+    </div>
+    <div class='all-time-container'>
+      <h3>All Time* Totals</h3>
+      <div class='all-time'></div>
+      <div class='tiny'>* Since Feb, 2017</div>
+    </div>
+    <script>
+      function areSameDate(d1, d2) {
+          return d1.getFullYear() == d2.getFullYear()
+              && d1.getMonth() == d2.getMonth()
+              && d1.getDate() == d2.getDate();
+      }
+
+      var spreadsheetID = "1HHJy1Im4zAMNqOSRXlx_sLYRA1jBa54BPqpMMunmAIs"; 
+      var url = "https://spreadsheets.google.com/feeds/list/" + spreadsheetID + "/od6/public/values?alt=json";
+
+      var today = new Date();
+
+      $.getJSON(url, function(data) {
+        var entry = data.feed.entry;
+
+        var allTimeTotals = {};
+        var todayTotals = {};
+        var todaySum = 0;
+
+        $(entry).each(function(){
+          var drink = this.gsx$drink.$t;
+          var currentAllTimeTotal = allTimeTotals[drink] || 0;
+          allTimeTotals[drink] = currentAllTimeTotal + 1;
+
+          var date = new Date(this.gsx$date.$t);
+          if (areSameDate(date, today)) {
+            var currentTodayTotal = todayTotals[drink] || 0;
+            todayTotals[drink] = currentTodayTotal + 1;
+            todaySum += 1;
+          }
+        });
+
+        var drinkRenameMap = {
+          Manual: "Manual Drip"
+        };
+
+        $.each(allTimeTotals, function(drink, count) {
+          drink = drinkRenameMap[drink] || drink;
+          var plural = count > 1 ? 's' : ''
+          $('.all-time').append('<div>' + count + ' ' + drink + plural + "</div>")
+        });
+
+        $('.today-container').prepend('<h1>' + todaySum + ' ' + '&#x2615; &#xfe0f; today.</h1>');
+
+        var todaySummaryStrings = [];
+        $.each(todayTotals, function(drink, count) {
+          drink = drinkRenameMap[drink] || drink;
+          var plural = count > 1 ? 's' : ''
+          todaySummaryStrings.push(count + ' ' + drink + plural);
+        });
+        if (todaySummaryStrings.length > 0) {
+          $('.today-summary').append('(' + todaySummaryStrings.join(', ') + ')');
+        }
+
+      });
+    </script>
   </body>
 </html>
   
