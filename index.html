@@ -47,9 +47,13 @@
       footer > a {
         color: black;
       }
+      .hidden {
+        visibility: hidden;
+        display: none;
+      }
     </style>
   </head>
-  <body>
+  <body class='hidden'>
     <div class='today-container'>
       <div class='today-summary'></div>
     </div>
@@ -115,6 +119,7 @@
           $('.today-summary').append('(' + todaySummaryStrings.join(', ') + ')');
         }
 
+        $('body').removeClass('hidden');
       });
     </script>
   </body>
