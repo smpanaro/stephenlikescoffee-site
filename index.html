@@ -37,6 +37,15 @@
       .tiny {
         font-size: 10px;
       }
+      footer {
+        position: absolute;
+        bottom: 5px;
+        text-align: center;
+        width: 100%;
+      }
+      footer > a {
+        color: black;
+      }
     </style>
   </head>
   <body>
@@ -48,6 +57,9 @@
       <div class='all-time'></div>
       <div class='tiny'>* Since Feb, 2017</div>
     </div>
+    <footer class='tiny'>
+      Brewed by Stephen Panaro (<a href='https://www.twitter.com/flat'>@flat</a>) - &copy; 2017
+    </footer>
     <script>
       function areSameDate(d1, d2) {
           return d1.getFullYear() == d2.getFullYear()
@@ -87,7 +99,7 @@
         $.each(allTimeTotals, function(drink, count) {
           drink = drinkRenameMap[drink] || drink;
           var plural = count > 1 ? 's' : ''
-          $('.all-time').append('<div>' + count + ' ' + drink + plural + "</div>")
+          $('.all-time').append('<div>' + count + ' ' + drink + plural + '</div>');
         });
 
         $('.today-container').prepend('<h1>' + todaySum + ' ' + '&#x2615;&#xfe0f; today.</h1>');
