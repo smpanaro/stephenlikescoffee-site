@@ -72,6 +72,17 @@
               && d1.getDate() == d2.getDate();
       }
 
+      function sortedList(o) {
+        // Returns a sorted list of {key, value} objects from an objects' properties.
+
+        var l = [];
+        for (var k in o) {
+          var v = o[k];
+          l.push({key: k, value: v});
+        }
+        return l.sort(function (a,b) { return b.value - a.value; });
+      }
+
       var spreadsheetID = "1HHJy1Im4zAMNqOSRXlx_sLYRA1jBa54BPqpMMunmAIs"; 
       var url = "https://spreadsheets.google.com/feeds/list/" + spreadsheetID + "/od6/public/values?alt=json";
 
@@ -101,7 +112,9 @@
           Manual: "Manual Drip"
         };
 
-        $.each(allTimeTotals, function(drink, count) {
+        $.each(sortedList(allTimeTotals), function(idx, o) {
+          var drink = o.key;
+          var count = o.value;
           drink = drinkRenameMap[drink] || drink;
           var plural = count > 1 ? 's' : ''
           $('.all-time').append('<div>' + count + ' ' + drink + plural + '</div>');
